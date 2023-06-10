@@ -8,7 +8,7 @@ import sqlite3
 import datetime
 import threading
 import asyncio
-token = '6021836757:AAFu1PVkjrjcG1R4sfQTBv79A8pYQQb-08Q'
+token = '6093970106:AAFugNzYa1SL0WTgReF4gHznIwqAF6tSRSY'
 bot = Bot(token=token)
 storage = MemoryStorage()
 dp = Dispatcher(bot=bot, storage=storage)
@@ -306,16 +306,19 @@ async def spam_strsx(msg: types.Message, state: FSMContext):
 
 @dp.message_handler(state=get_spam.spam_start)
 async def stam_it(msg: types.Message, state: FSMContext):
-    if msg.text == 'Отмена':
-        await msg.answer('Отменено', reply_markup=ads_55())
-        await state.finish()
-    else:
-        with tbase:
-            s = tc.execute('SELECT user_id FROM users').fetchall()
-        for sends in s:
-            await bot.send_message(chat_id=sends[0], text=msg.text)
-        await msg.answer('Рассылено', reply_markup=ads_55())
-        await state.finish()
+    try:
+        if msg.text == 'Отмена':
+            await msg.answer('Отменено', reply_markup=ads_55())
+            await state.finish()
+        else:
+            with tbase:
+                s = tc.execute('SELECT user_id FROM users').fetchall()
+            for sends in s:
+                await bot.send_message(chat_id=sends[0], text=msg.text)
+            await msg.answer('Рассылено', reply_markup=ads_55())
+            await state.finish()
+    except Exception as e:
+        print(e)
 
 
 
