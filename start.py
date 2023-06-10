@@ -9,7 +9,7 @@ import sqlite3
 import datetime
 import threading
 import asyncio
-token = '6093970106:AAFugNzYa1SL0WTgReF4gHznIwqAF6tSRSY'
+token = '6021836757:AAFu1PVkjrjcG1R4sfQTBv79A8pYQQb-08Q'
 bot = Bot(token=token)
 storage = MemoryStorage()
 dp = Dispatcher(bot=bot, storage=storage)
