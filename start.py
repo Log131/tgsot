@@ -3,12 +3,13 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from aiogram.dispatcher import FSMContext
+from aiogram import utils
 from keyboards import *
 import sqlite3
 import datetime
 import threading
 import asyncio
-token = '6021836757:AAFu1PVkjrjcG1R4sfQTBv79A8pYQQb-08Q'
+token = '6093970106:AAFugNzYa1SL0WTgReF4gHznIwqAF6tSRSY'
 bot = Bot(token=token)
 storage = MemoryStorage()
 dp = Dispatcher(bot=bot, storage=storage)
@@ -313,13 +314,13 @@ async def stam_it(msg: types.Message, state: FSMContext):
         else:
             with tbase:
                 s = tc.execute('SELECT user_id FROM users').fetchall()
-            try:
-                for sends in s:
+            for sends in s:
+                try:
                     await bot.send_message(chat_id=sends[0], text=msg.text)
-                await msg.answer('Рассылено', reply_markup=ads_55())
-                await state.finish()
-            except Exception as e:
-                print(e)
+                except Exception as e:
+                    print(e)
+            await msg.answer('Рассылено', reply_markup=ads_55())
+            await state.finish()
     except Exception as e:
         print(e)
 
