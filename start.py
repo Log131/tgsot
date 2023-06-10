@@ -316,10 +316,10 @@ async def stam_it(msg: types.Message, state: FSMContext):
             try:
                 for sends in s:
                     await bot.send_message(chat_id=sends[0], text=msg.text)
+                await msg.answer('Рассылено', reply_markup=ads_55())
+                await state.finish()
             except Exception as e:
                 print(e)
-            await msg.answer('Рассылено', reply_markup=ads_55())
-            await state.finish()
     except Exception as e:
         print(e)
 
