@@ -6,7 +6,7 @@ import asyncio
 import sqlite3
 from datetime import datetime, time
 
-token = '6093970106:AAFugNzYa1SL0WTgReF4gHznIwqAF6tSRSY'
+token = '5984947658:AAFEJNgy0rXV8FxfVRsV7uvcgS8Co1Mi24w'
 
 bot = Bot(token=token)
 dp = Dispatcher(bot=bot)
