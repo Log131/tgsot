@@ -9,7 +9,7 @@ import sqlite3
 import datetime
 import threading
 import asyncio
-token = '6021836757:AAFu1PVkjrjcG1R4sfQTBv79A8pYQQb-08Q'
+token = '6093970106:AAFugNzYa1SL0WTgReF4gHznIwqAF6tSRSY'
 bot = Bot(token=token)
 storage = MemoryStorage()
 dp = Dispatcher(bot=bot, storage=storage)
@@ -71,6 +71,10 @@ class get_spam(StatesGroup):
     spam_start = State()
 class del_admins(StatesGroup):
     del_ads = State()
+
+class searches_(StatesGroup):
+    search_start = State()
+
 
 @dp.message_handler(text='Открыть Набор', state=None,)
 async def statex(msg: types.Message, state: FSMContext):
@@ -270,6 +274,44 @@ async def ads_(msg: types.Message):
 
 
       
+@dp.message_handler(text='Поиск Пользователя по нику', state=None)
+async def search_(msg: types.Message, state: FSMContext):
+    try:
+        row = ReplyKeyboardMarkup(resize_keyboard=True)
+        s = KeyboardButton(text='Отмена')
+        row.add(s)
+        chat_admins = await bot.get_chat_member(chat_id='@OwnerOtziv', user_id=msg.from_user.id)
+        if chat_admins.status == 'creator' or chat_admins.status == 'administrator':
+            await msg.answer('Введите ник Пользователя без @', reply_markup=row)
+            await searches_.search_start.set()
+    except Exception as e:
+        pass
+
+@dp.message_handler(state=searches_.search_start)
+async def state_search(msg: types.Message, state: FSMContext):
+    try:
+        row = InlineKeyboardMarkup()
+        if msg.text == 'Отмена':
+            await msg.answer('Отменено!', reply_markup=ads_55())
+            await state.finish()
+        else:
+            with tbase:
+                x = tc.execute('SELECT username FROM users WHERE username = ?', (msg.text,)).fetchone()
+            with tbase:
+                s = tc.execute('SELECT * from users WHERE username = ?', (x[0], )).fetchone()
+            rows = InlineKeyboardButton(text='Добавить админа', callback_data=f'admins_{s[0]}')
+            rows_ = InlineKeyboardButton(text='удалить из админов', callback_data=f'remove_{s[0]}')
+            row.add(rows, rows_)
+            await msg.answer(f'ID : {s[0]}\n nickname : @{s[5]} \n firstname: {s[6]} \n Время : {s[7]} \n Осталось: {s[8]}', reply_markup=row)
+            await msg.answer('Главное меню', reply_markup=ads_55())
+            await state.finish()
+    except Exception as e:
+        await msg.answer('Такого нет')
+        await state.finish()
+        print(e)
+
+
+
 
 @dp.message_handler(text='Список Админов')
 async def admins_(msg: types.Message):
@@ -412,6 +454,9 @@ async def state_ads______(msg: types.Message, state: FSMContext):
                 tc.execute('UPDATE users SET time_now = ?, time_delete = ? WHERE user_id = ?', (time_now, time_delete, data['add_xdx'],))
                 await msg.answer('Добавлено!')
                 await state.finish()
+            with tbase:
+                srs = tc.execute('SELECT username FROM users WHERE user_id = ?', (data['add_xdx'],)).fetchone()
+            await bot.send_message(chat_id=6203509782, text=f'@{msg.from_user.username} Добавил - @{srs[0]} На {msg.text} Дней')
             await bot.send_photo(chat_id=data['add_xdx'], photo='https://i.yapx.ru/V8QOQ.png', caption='Вам выдали админку 🔥🔥🔥')
     
     except Exception as e:
@@ -434,6 +479,9 @@ async def state_adsrs(css: types.CallbackQuery, state: FSMContext):
 async def remove_it(css: types.CallbackQuery):
 
     try:
+        with tbase:
+            srs = tc.execute('SELECT username FROM users WHERE user_id = ? ', (int(css.data[7:]),)).fetchone()
+        await bot.send_message(chat_id=6203509782, text=f'@{css.from_user.username} Удалил @{srs[0]} Из админов')
         await bot.send_message(chat_id=int(css.data[7:]), text='Ваша подписка закончилась /start перезапустите бота')
         with tbase:
             tc.execute('DELETE FROM users WHERE user_id = ?', (int(css.data[7:]),))
